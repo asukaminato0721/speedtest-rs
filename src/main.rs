@@ -3,9 +3,11 @@ mod error;
 mod speedtest;
 mod speedtest_config;
 mod speedtest_csv;
+mod speedtest_json;
 mod speedtest_servers_config;
 
 use crate::speedtest_csv::SpeedTestCsvResult;
+use crate::speedtest_json::SpeedTestJsonResult;
 use chrono::Utc;
 use clap::{crate_version, App, Arg};
 use log::info;
@@ -70,6 +72,11 @@ fn main() -> Result<(), error::SpeedTestError> {
                         Err("--csv-delimiter must be a single character".into())
                     }
                 }),
+        )
+        .arg(Arg::with_name("json").long("json"))
+        .help(
+            "Suppress verbose output, only show basic information in JSON format. \
+            Speeds listed in bit/s and not affected by --bytes",
         )
         .arg(
             Arg::with_name("mini")
@@ -304,6 +311,36 @@ fn main() -> Result<(), error::SpeedTestError> {
             .from_writer(io::stdout());
         wtr.serialize(speedtest_csv_result)?;
         wtr.flush()?;
+        return Ok(());
+    }
+
+    if matches.is_present("json") {
+        let speedtest_json_result = SpeedTestJsonResult {
+            server_id: &best_server.id.to_string(),
+            sponsor: &best_server.sponsor,
+            server_name: &best_server.name,
+            timestamp: &Utc::now().to_rfc3339_opts(chrono::SecondsFormat::Micros, true),
+            distance: &(latency_test_result
+                .server
+                .distance
+                .map_or("".to_string(), |d| format!("{d:.14}")))[..],
+            ping: &format!(
+                "{}.{}",
+                latency_test_result.latency.as_millis(),
+                latency_test_result.latency.as_micros() % 1000
+            ),
+            download: &download_measurement
+                .map_or(0.0, |x| x.bps_f64())
+                .to_string(),
+            upload: &upload_measurement.map_or(0.0, |x| x.bps_f64()).to_string(),
+            share: &if matches.is_present("share") {
+                speedtest::get_share_url(&speedtest_result)?
+            } else {
+                "".to_string()
+            },
+            ip_address: &config.client.ip.to_string(),
+        };
+        println!("{}", serde_json::to_string(&speedtest_json_result)?);
         return Ok(());
     }
 

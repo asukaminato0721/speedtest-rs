@@ -5,4 +5,5 @@ pub mod error;
 pub mod speedtest;
 pub mod speedtest_config;
 pub mod speedtest_csv;
+pub mod speedtest_json;
 pub mod speedtest_servers_config;

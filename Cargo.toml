@@ -21,6 +21,7 @@ serde = { version = "1.0.114", features = ["derive"] }
 roxmltree = "0.13.0"
 rayon = "1.3.1"
 iter-read = "0.3.0"
+serde_json = "1.0.108"
 
 [dependencies.reqwest]
 version = "0.11.14"

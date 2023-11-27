@@ -3,6 +3,7 @@ pub enum SpeedTestError {
     Reqwest(reqwest::Error),
     Io(::std::io::Error),
     Csv(csv::Error),
+    Json(serde_json::Error),
     ParseFloatError(std::num::ParseFloatError),
     ParseIntError(std::num::ParseIntError),
     AddrParseError(std::net::AddrParseError),
@@ -32,6 +33,12 @@ impl From<::std::io::Error> for SpeedTestError {
 impl From<csv::Error> for SpeedTestError {
     fn from(err: csv::Error) -> SpeedTestError {
         SpeedTestError::Csv(err)
+    }
+}
+
+impl From<serde_json::Error> for SpeedTestError {
+    fn from(err: serde_json::Error) -> SpeedTestError {
+        SpeedTestError::Json(err)
     }
 }
 
