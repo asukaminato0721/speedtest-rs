@@ -10,7 +10,7 @@ impl SpeedTestServersConfig {
     pub fn parse_with_config(
         server_config_xml: &str,
         config: &SpeedTestConfig,
-    ) -> Result<SpeedTestServersConfig, SpeedTestError> {
+    ) -> Result<Self, SpeedTestError> {
         let document = roxmltree::Document::parse(server_config_xml)?;
         let servers = document
             .descendants()
@@ -58,7 +58,7 @@ impl SpeedTestServersConfig {
             .filter_map(Result::ok)
             .filter(|server| !config.ignore_servers.contains(&server.id))
             .collect();
-        Ok(SpeedTestServersConfig { servers })
+        Ok(Self { servers })
     }
 
     pub fn servers_sorted_by_distance(&self, config: &SpeedTestConfig) -> Vec<SpeedTestServer> {

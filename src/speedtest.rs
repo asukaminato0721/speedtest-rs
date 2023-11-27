@@ -154,7 +154,7 @@ pub struct SpeedMeasurement {
 }
 
 impl SpeedMeasurement {
-    pub fn kbps(&self) -> u32 {
+    pub const fn kbps(&self) -> u32 {
         (self.size as u32 * 8) / self.duration.as_millis() as u32
     }
 

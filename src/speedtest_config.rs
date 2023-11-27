@@ -8,7 +8,7 @@ pub struct SpeedTestClientConfig {
 
 impl Default for SpeedTestClientConfig {
     fn default() -> Self {
-        SpeedTestClientConfig {
+        Self {
             ip: Ipv4Addr::new(127, 0, 0, 1),
             isp: String::default(),
         }
@@ -40,7 +40,7 @@ pub struct SpeedTestLengthConfig {
 
 impl Default for SpeedTestLengthConfig {
     fn default() -> Self {
-        SpeedTestLengthConfig {
+        Self {
             upload: Duration::from_secs(10),
             download: Duration::from_secs(10),
         }
@@ -60,7 +60,7 @@ pub struct SpeedTestConfig {
 }
 
 impl SpeedTestConfig {
-    pub fn parse(config_xml: &str) -> Result<SpeedTestConfig, SpeedTestError> {
+    pub fn parse(config_xml: &str) -> Result<Self, SpeedTestError> {
         let document = roxmltree::Document::parse(config_xml)?;
 
         let server_config_node = document
@@ -156,7 +156,7 @@ impl SpeedTestConfig {
                 .to_string(),
         };
 
-        Ok(SpeedTestConfig {
+        Ok(Self {
             client,
             ignore_servers,
             sizes,
