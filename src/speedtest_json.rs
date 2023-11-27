@@ -1,5 +1,4 @@
 use serde::Serialize;
-use serde_json::Result;
 
 #[derive(Debug, Serialize, Default)]
 pub struct SpeedTestJsonResult<'a> {
@@ -23,30 +22,4 @@ pub struct SpeedTestJsonResult<'a> {
     pub share: &'a str,
     #[serde(rename = "IP Address")]
     pub ip_address: &'a str,
-}
-
-impl<'a> SpeedTestJsonResult<'a> {
-    pub fn header_serialize(self) -> String {
-        // Un-dynamic for now
-        // Blocked on:
-        // * https://github.com/BurntSushi/rust-csv/issues/161 being implemented or solved
-        // * https://github.com/BurntSushi/rust-csv/pull/193/files, like in this?
-        "Server ID,Sponsor,Server Name,Timestamp,Distance,Ping,Download,Upload,Share,IP Address"
-            .to_string()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_header_serialize() -> Result<()> {
-        let original = "Server ID,Sponsor,Server Name,Timestamp,Distance,Ping,Download,Upload,Share,IP Address";
-
-        let results = SpeedTestJsonResult::default();
-
-        assert_eq!(results.header_serialize(), original);
-        Ok(())
-    }
 }
